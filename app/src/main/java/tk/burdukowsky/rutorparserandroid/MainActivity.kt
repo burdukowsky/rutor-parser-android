@@ -5,15 +5,22 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.SearchView
+import javax.inject.Inject
+import android.os.AsyncTask
 
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var apiService: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         handleIntent(intent)
+        DaggerAppComponent.builder().build().inject(this)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -37,7 +44,25 @@ class MainActivity : AppCompatActivity() {
     private fun handleIntent(intent: Intent) {
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
-            // doMySearch(query)
+            GetResultsTask().execute(query)
+        }
+    }
+
+    class GetResultsTask : AsyncTask<String, Void, List<Result>>() {
+        @Inject
+        lateinit var apiService: ApiService
+
+        override fun onPreExecute() {
+            DaggerAppComponent.builder().build().inject(this)
+            super.onPreExecute()
+        }
+
+        override fun doInBackground(vararg params: String): List<Result>? {
+            return apiService.getResults(params[0]).execute().body()
+        }
+
+        override fun onPostExecute(result: List<Result>) {
+            super.onPostExecute(result)
         }
     }
 }
