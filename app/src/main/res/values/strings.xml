@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Rutor Magnet Search</string>
+    <string name="search_hint">Search Torrents</string>
 </resources>
