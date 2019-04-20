@@ -6,4 +6,6 @@
     <string name="request_failed_message">Ошибка запроса, проверьте Интернет-соединение или попробуйте позже</string>
     <string name="seeds">⇑%d</string>
     <string name="leaches">⇓%d</string>
+    <string name="magnet_button_description">magnet</string>
+    <string name="not_found_application">Не найдено приложений для открытия magnet-ссылки</string>
 </resources>
