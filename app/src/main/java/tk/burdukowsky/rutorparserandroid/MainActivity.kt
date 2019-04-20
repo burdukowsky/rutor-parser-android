@@ -14,12 +14,17 @@ import android.widget.ListView
 import android.widget.SearchView
 import android.widget.TextView
 import java.lang.ref.WeakReference
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var linearLayoutProgress: LinearLayout
     private lateinit var list: ListView
     private lateinit var empty: TextView
+    private lateinit var errorMessage: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         linearLayoutProgress = findViewById(R.id.linearLayoutProgress)
         list = findViewById(android.R.id.list)
         empty = findViewById(android.R.id.empty)
+        errorMessage = findViewById(R.id.errorMessage)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -57,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private class GetResultsTask
-    internal constructor(context: MainActivity) : AsyncTask<String, Void, List<Result>>() {
+    internal constructor(context: MainActivity) : AsyncTask<String, Void, Call<List<Result>>>() {
 
         private val activityReference: WeakReference<MainActivity> = WeakReference(context)
         private val apiService: ApiService = ApiServiceProvider.instance
@@ -65,24 +71,55 @@ class MainActivity : AppCompatActivity() {
         override fun onPreExecute() {
             val activity = activityReference.get()
             if (activityEnded(activity)) return
-            activity!!.linearLayoutProgress.visibility = View.VISIBLE
+            activity!!
+            setViewVisibility(activity.linearLayoutProgress, true)
+            setViewVisibility(activity.empty, false)
+            setViewVisibility(activity.errorMessage, false)
         }
 
-        override fun doInBackground(vararg params: String): List<Result>? {
-            return apiService.getResults(params[0]).execute().body() // todo: error catch
+        override fun doInBackground(vararg params: String): Call<List<Result>> {
+            return apiService.getResults(params[0])
         }
 
-        override fun onPostExecute(results: List<Result>) {
+        override fun onPostExecute(call: Call<List<Result>>) {
             val activity = activityReference.get()
             if (activityEnded(activity)) return
             activity!!
-            activity.linearLayoutProgress.visibility = View.GONE
-            activity.list.adapter = ResultListAdapter(activity, results)
-            activity.empty.visibility = if (results.isEmpty()) View.VISIBLE else View.GONE
+            setViewVisibility(activity.linearLayoutProgress, false)
+
+            call.enqueue(
+                object : Callback<List<Result>> {
+                    override fun onResponse(call: Call<List<Result>>, response: Response<List<Result>>) {
+                        val results = response.body()
+                        if (response.isSuccessful && results != null) {
+                            activity.list.adapter = ResultListAdapter(activity, results)
+                            setViewVisibility(activity.empty, results.isEmpty())
+                        } else {
+                            activity.errorMessage.text =
+                                activity.getString(R.string.error_message, response.code(), "") // todo: message
+                            setViewVisibility(activity.errorMessage, true)
+                            activity.list.adapter = ResultListAdapter(activity, Collections.emptyList())
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<Result>>, t: Throwable) {
+                        // todo: дублирование
+                        activity.errorMessage.text = activity.getString(R.string.request_failed_message)
+                        setViewVisibility(activity.errorMessage, true)
+                        activity.list.adapter = ResultListAdapter(activity, Collections.emptyList())
+                    }
+                }
+
+
+            )
         }
 
         private fun activityEnded(activity: Activity?): Boolean {
             return activity == null || activity.isFinishing
+        }
+
+        private fun setViewVisibility(view: View, status: Boolean) {
+            view.visibility = if (status) View.VISIBLE else View.GONE
         }
     }
 
