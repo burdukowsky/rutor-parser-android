@@ -85,7 +85,6 @@ class MainActivity : AppCompatActivity() {
             val activity = activityReference.get()
             if (activityEnded(activity)) return
             activity!!
-            setViewVisibility(activity.linearLayoutProgress, false)
 
             call.enqueue(
                 object : Callback<List<Result>> {
@@ -95,8 +94,16 @@ class MainActivity : AppCompatActivity() {
                             activity.list.adapter = ResultListAdapter(activity, results)
                             setViewVisibility(activity.empty, results.isEmpty())
                         } else {
-                            activity.errorMessage.text =
-                                activity.getString(R.string.error_message, response.code(), "") // todo: message
+                            var errorMessage = activity.getString(R.string.error_message, response.code())
+                            val errorBody = response.errorBody()
+                            if (errorBody != null) {
+                                val apiError = ErrorConverterProvider.instance.convert(errorBody)
+                                if (apiError != null) {
+                                    errorMessage += ": ${apiError.message}"
+                                }
+                            }
+                            // todo: дублирование
+                            activity.errorMessage.text = errorMessage
                             setViewVisibility(activity.errorMessage, true)
                             activity.list.adapter = ResultListAdapter(activity, Collections.emptyList())
                         }
@@ -109,9 +116,9 @@ class MainActivity : AppCompatActivity() {
                         activity.list.adapter = ResultListAdapter(activity, Collections.emptyList())
                     }
                 }
-
-
             )
+
+            setViewVisibility(activity.linearLayoutProgress, false)
         }
 
         private fun activityEnded(activity: Activity?): Boolean {

@@ -2,6 +2,6 @@
     <string name="app_name">Rutor Magnet Search</string>
     <string name="search_hint">Search Torrents</string>
     <string name="no_results">Ничего не найдено</string>
-    <string name="error_message">Ошибка %d: %s</string>
+    <string name="error_message">Ошибка %d</string>
     <string name="request_failed_message">Ошибка запроса, проверьте Интернет-соединение или попробуйте позже</string>
 </resources>
