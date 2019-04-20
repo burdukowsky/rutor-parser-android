@@ -30,12 +30,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        handleIntent(intent)
 
         linearLayoutProgress = findViewById(R.id.linearLayoutProgress)
         list = findViewById(android.R.id.list)
         empty = findViewById(android.R.id.empty)
         errorMessage = findViewById(R.id.errorMessage)
+
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
