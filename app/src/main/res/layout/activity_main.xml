@@ -31,11 +31,15 @@
               android:layout_height="match_parent"
               android:text="@string/no_results"
               android:gravity="center"
-              android:visibility="gone"/>
+              android:visibility="gone"
+              android:textStyle="italic"
+              android:padding="16dp"/>
 
     <TextView android:id="@+id/errorMessage"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center"
-              android:visibility="gone"/>
+              android:visibility="gone"
+              android:textColor="@color/colorDanger"
+              android:padding="16dp"/>
 </LinearLayout>

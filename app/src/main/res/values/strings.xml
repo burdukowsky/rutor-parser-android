@@ -4,4 +4,6 @@
     <string name="no_results">Ничего не найдено</string>
     <string name="error_message">Ошибка %d</string>
     <string name="request_failed_message">Ошибка запроса, проверьте Интернет-соединение или попробуйте позже</string>
+    <string name="seeds">⇑%d</string>
+    <string name="leaches">⇓%d</string>
 </resources>
