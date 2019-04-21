@@ -102,28 +102,28 @@ class MainActivity : AppCompatActivity() {
                                 errorMessage += ": ${apiError.message}"
                             }
                         }
-                        // todo: дублирование
-                        activity.errorMessage.text = errorMessage
-                        setViewVisibility(activity.errorMessage, true)
-                        activity.list.adapter = ResultListAdapter(activity, Collections.emptyList())
+                        showErrorMessage(activity, errorMessage)
                     }
 
-                    // todo: дублирование
-                    setViewVisibility(activity.linearLayoutProgress, false)
+                    complete(activity)
                 }
 
                 override fun onFailure(call: Call<List<Result>>, t: Throwable) {
                     val activity = activityReference.get()
                     if (activityEnded(activity)) return
                     activity!!
+                    showErrorMessage(activity, activity.getString(R.string.request_failed_message))
+                    complete(activity)
+                }
 
-                    // todo: дублирование
-                    activity.errorMessage.text = activity.getString(R.string.request_failed_message)
+                private fun complete(activity: MainActivity) {
+                    setViewVisibility(activity.linearLayoutProgress, false)
+                }
+
+                private fun showErrorMessage(activity: MainActivity, message: String) {
+                    activity.errorMessage.text = message
                     setViewVisibility(activity.errorMessage, true)
                     activity.list.adapter = ResultListAdapter(activity, Collections.emptyList())
-
-                    // todo: дублирование
-                    setViewVisibility(activity.linearLayoutProgress, false)
                 }
             }
         )
