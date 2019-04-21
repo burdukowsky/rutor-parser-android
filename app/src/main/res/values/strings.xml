@@ -8,4 +8,5 @@
     <string name="leaches">⇓%d</string>
     <string name="magnet_button_description">magnet</string>
     <string name="not_found_application">Не найдено приложений для открытия magnet-ссылки</string>
+    <string name="query_minimum_length">Минимальная длина поискового запроса составляет %d символа</string>
 </resources>

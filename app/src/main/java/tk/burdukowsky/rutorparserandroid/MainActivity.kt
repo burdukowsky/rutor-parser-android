@@ -8,10 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.SearchView
-import android.widget.TextView
+import android.widget.*
 import java.lang.ref.WeakReference
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,6 +16,8 @@ import retrofit2.Response
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    private val queryMinimumLength = 3
 
     private val apiService: ApiService = ApiServiceProvider.instance
 
@@ -59,8 +58,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleIntent(intent: Intent) {
         if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            getResults(query)
+            val query = intent.getStringExtra(SearchManager.QUERY).trim()
+            if (query.length >= queryMinimumLength) {
+                getResults(query)
+            } else {
+                Toast
+                    .makeText(
+                        this,
+                        this.getString(R.string.query_minimum_length, queryMinimumLength),
+                        Toast.LENGTH_SHORT
+                    )
+                    .show()
+            }
         }
     }
 
