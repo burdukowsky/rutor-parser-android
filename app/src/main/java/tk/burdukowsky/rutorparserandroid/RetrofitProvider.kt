@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitProvider {
     val instance = Retrofit.Builder()
-        .baseUrl("https://rgodxvxfad.ml/rutor-parser/")
+        .baseUrl("https://rms.burdukowsky.tk/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 }

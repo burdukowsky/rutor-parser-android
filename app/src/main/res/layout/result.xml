@@ -53,7 +53,7 @@
             android:id="@+id/imageButtonResultMagnet"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/magnet"
+            android:src="@mipmap/magnet"
             android:contentDescription="@string/magnet_button_description"/>
 
 </LinearLayout>
